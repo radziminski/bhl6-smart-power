@@ -14,7 +14,8 @@ OPTIMIZED_TIME_PERIOD = datetime.timedelta(hours=1)  # 1h
 class PowerConsumptionSystemMode(IntEnum):
     Mode1 = 1  # main source: photovoltaics, under: net, over: accumulator
     Mode2 = 2  # main source: photovoltaics, under: net, over: net
-    Mode3 = 3  # main source: photovoltaics, under: net, over: out (net->accumulator)
+    # main source: photovoltaics, under: net, over: out (net->accumulator)
+    Mode3 = 3
     Mode4 = 4  # main source: photovoltaics & accumulator, under: net, over: out
 
 
@@ -31,7 +32,8 @@ def compute_power_balance(
     clouding: float,
 ) -> PowerOutput:
     water_power = water_svc.get_water_power(date)
-    photovolt_power = photovolt_svc.get_photovoltaics_created_power(date, clouding)
+    photovolt_power = photovolt_svc.get_photovoltaics_created_power(
+        date, clouding)
 
     temps = radiator_svc.Temperatures(
         curr_temp=curr_temp,
@@ -42,6 +44,7 @@ def compute_power_balance(
     radiator_power = radiator_svc.compute_radiator_usage_result(
         temps, temps_power_control, 10.0 - water_power
     )
+    print(radiator_power.output_temperature)
 
     other_dev_power = other_svc.power_of_other_devices(
         date, date + OPTIMIZED_TIME_PERIOD
@@ -108,7 +111,8 @@ def system_iterate(
     accumulator_power: float
 ) -> Tuple[SystemOutput, float]:
 
-    power_output = compute_power_balance(date, curr_temp, outside_temp, clouding)
+    power_output = compute_power_balance(
+        date, curr_temp, outside_temp, clouding)
     sys_input = SystemInput(power_output, sys_mode, accumulator_power)
     sys_output = process_system(sys_input)
 
