@@ -6,7 +6,7 @@ import json
 parameters = {
     "lat": 52.229676,
     "lon": 21.012229,
-    "appid": "fa7600fc40a1fff635b882e00bb122b0",
+    "appid": "",
     "exclude": ["minutely", "daily", "alerts"],
     "units": "metric"
 }
@@ -18,8 +18,6 @@ def jprint(obj):
 
 
 if __name__ == "__main__":
-
-    API_key = "fa7600fc40a1fff635b882e00bb122b0"
 
     response = requests.get(
         "http://api.openweathermap.org/data/2.5/onecall", params=parameters)
