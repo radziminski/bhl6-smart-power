@@ -60,7 +60,7 @@ def compute_radiator_usage_result(
         )
 
 
-def temp2temp_control(outside_temp: float) -> TemperaturePowerControl:
+def outside_temp2temp_control(outside_temp: float) -> TemperaturePowerControl:
     @dataclass(unsafe_hash=True)
     class Range:
         upper_limit: int

@@ -14,8 +14,7 @@ OPTIMIZED_TIME_PERIOD = datetime.timedelta(hours=1)  # 1h
 class PowerConsumptionSystemMode(IntEnum):
     Mode1 = 1  # main source: photovoltaics, under: net, over: accumulator
     Mode2 = 2  # main source: photovoltaics, under: net, over: net
-    # main source: photovoltaics, under: net, over: out (net->accumulator)
-    Mode3 = 3
+    Mode3 = 3  # main source: photovoltaics, under: net, over: out (net->accumulator)
     Mode4 = 4  # main source: photovoltaics & accumulator, under: net, over: out
 
 
@@ -40,7 +39,7 @@ def compute_power_balance(
         desired_temp=radiator_svc.determine_desired_temperature(date),
         outside_temp=outside_temp,
     )
-    temps_power_control = radiator_svc.temp2temp_control(outside_temp)
+    temps_power_control = radiator_svc.outside_temp2temp_control(outside_temp)
     radiator_power = radiator_svc.compute_radiator_usage_result(
         temps, temps_power_control, 10.0 - water_power
     )
