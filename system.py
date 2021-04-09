@@ -49,8 +49,6 @@ def compute_power_balance(
         date, date + OPTIMIZED_TIME_PERIOD
     )
 
-    print(water_power, photovolt_power, temps, radiator_power, other_dev_power)
-
     total_power_balance = (
         photovolt_power - water_power - radiator_power.used_power - other_dev_power
     )
