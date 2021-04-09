@@ -60,7 +60,7 @@ def compute_radiator_usage_result(
         )
 
 
-def temp2temp_control(curr_temp: float) -> TemperaturePowerControl:
+def temp2temp_control(outside_temp: float) -> TemperaturePowerControl:
     @dataclass(unsafe_hash=True)
     class Range:
         upper_limit: int
@@ -78,5 +78,5 @@ def temp2temp_control(curr_temp: float) -> TemperaturePowerControl:
     }
 
     for key, value in temp2temp_control.items():
-        if key.lower_limit < curr_temp <= key.upper_limit:
+        if key.lower_limit < outside_temp <= key.upper_limit:
             return value
