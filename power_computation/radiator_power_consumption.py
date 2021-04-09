@@ -19,7 +19,7 @@ class TemperaturePowerControl:
 
 @dataclass
 class RadiatorPowerUsage:
-    used_power: int
+    used_power: float
     output_temperature: float
 
 
@@ -33,8 +33,9 @@ def determine_desired_temperature(date: datetime.datetime) -> float:
 
 
 def compute_radiator_usage_result(
-    temps: Temperatures, temps_power_control: TemperaturePowerControl
+    temps: Temperatures, temps_power_control: TemperaturePowerControl, max_capacity: float
 ) -> RadiatorPowerUsage:
+
     if temps.curr_temp == temps.desired_temp:  # sustain temperature
         return RadiatorPowerUsage(temps_power_control.sustain, temps.curr_temp)
 
@@ -42,12 +43,15 @@ def compute_radiator_usage_result(
         temp_diff = abs(temps.curr_temp - temps.desired_temp)
         power_needed = temps_power_control.increase_by_1 * temp_diff
 
-        return RadiatorPowerUsage(power_needed, temps.desired_temp)
+        temp_real_diff = temps.desired_temp if power_needed < max_capacity else temp_diff * max_capacity / power_needed
+
+        power_used = power_needed if power_needed < max_capacity else max_capacity
+
+        return RadiatorPowerUsage(power_used, temps.curr_temp + temp_real_diff)
     else:  # decrease temperature
         return RadiatorPowerUsage(
             0,
-            temps.curr_temp
-            - temps.curr_temp / (temps_power_control.hours_to_decrease_by_1 + 3e-5),
+            temps.curr_temp - 1 / (temps_power_control.hours_to_decrease_by_1 + 3e-5),
         )
 
 

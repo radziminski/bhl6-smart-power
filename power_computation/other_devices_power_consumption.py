@@ -1,7 +1,7 @@
 import datetime
 
 
-def energy_of_other_devices(start_time, end_time):
+def power_of_other_devices(start_time, end_time):
     time_diff = end_time - start_time
 
     SECONDS_IN_HOUR = 3600
@@ -22,7 +22,6 @@ def energy_of_other_devices(start_time, end_time):
     for delta_time in range(time_diff.seconds):
         future_time = datetime.timedelta(hours=start_time.hour + delta_time)
         future_time_and_date = start_time + future_time
-        retv += value[future_time_and_date.weekday()
-                      ][str(future_time_and_date.hour)]
+        retv += value[future_time_and_date.weekday()][str(future_time_and_date.hour)]
 
     return retv
