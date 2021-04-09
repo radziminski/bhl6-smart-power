@@ -43,8 +43,7 @@ def compute_radiator_usage_result(
         temp_diff = abs(temps.curr_temp - temps.desired_temp)
         power_needed = temps_power_control.increase_by_1 * temp_diff
 
-        temp_real_diff = temps.desired_temp if power_needed < max_capacity else temp_diff * \
-            max_capacity / power_needed
+        temp_real_diff = temp_diff if power_needed < max_capacity else temp_diff * max_capacity / power_needed
 
         power_used = power_needed if power_needed < max_capacity else max_capacity
 
