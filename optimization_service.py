@@ -4,7 +4,8 @@ import system as sys
 
 
 def main():
-    sys_output, temp = sys.system_iterate(datetime.datetime(2020, 1, 1, 12, 0, 0), 20.0, 20.0, 0.5, sys.PowerConsumptionSystemMode.Mode1, 0.0)
+    sys_output, temp = sys.system_iterate(datetime.datetime(
+        2020, 9, 28, 11, 0, 0), 20.0, 15.0, 1.0, sys.PowerConsumptionSystemMode.Mode3, 0.0)
 
     print(sys_output)
     print(temp)

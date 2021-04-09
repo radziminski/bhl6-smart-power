@@ -14,7 +14,8 @@ OPTIMIZED_TIME_PERIOD = datetime.timedelta(hours=1)  # 1h
 class PowerConsumptionSystemMode(IntEnum):
     Mode1 = 1  # main source: photovoltaics, under: net, over: accumulator
     Mode2 = 2  # main source: photovoltaics, under: net, over: net
-    Mode3 = 3  # main source: photovoltaics, under: net, over: out (net->accumulator)
+    # main source: photovoltaics, under: net, over: out (net->accumulator)
+    Mode3 = 3
     Mode4 = 4  # main source: photovoltaics & accumulator, under: net, over: out
 
 
@@ -48,6 +49,8 @@ def compute_power_balance(
         date, date + OPTIMIZED_TIME_PERIOD
     )
 
+    print(water_power, photovolt_power, temps, radiator_power, other_dev_power)
+
     total_power_balance = (
         photovolt_power - water_power - radiator_power.used_power - other_dev_power
     )
@@ -70,15 +73,22 @@ class SystemOutput:
 def process_system(sys_input: SystemInput) -> SystemOutput:
     if sys_input.power_output.power_balance >= 0.0:
         if sys_input.sys_mode in [
-            PowerConsumptionSystemMode.Mode3,
             PowerConsumptionSystemMode.Mode4,
         ]:
             return SystemOutput(0.0, sys_input.accumulator_power)
+        if sys_input.sys_mode in [
+            PowerConsumptionSystemMode.Mode3,
+        ]:
+            if sys_input.accumulator_power <= 6:
+                return SystemOutput(-1.0, sys_input.accumulator_power + 1)
+            else:
+                return SystemOutput(7 - sys_input.accumulator_power, 7)
         elif sys_input.sys_mode == PowerConsumptionSystemMode.Mode1:
-            acc_power_gain = max(1, sys_input.power_output.power_balance)
+            acc_power_gain = min(1, sys_input.power_output.power_balance)
 
             return SystemOutput(
-                0.0, min(10.0, sys_input.accumulator_power + acc_power_gain)
+                0.0, min(
+                    10.0, min(sys_input.accumulator_power + acc_power_gain, 7))
             )
         else:
             return SystemOutput(
@@ -94,6 +104,12 @@ def process_system(sys_input: SystemInput) -> SystemOutput:
                 return SystemOutput(0.0, new_accumulator_power_diff)
             else:
                 return SystemOutput(new_accumulator_power_diff, 0.0)
+
+        if sys_input.sys_mode == PowerConsumptionSystemMode.Mode3:
+            if sys_input.accumulator_power <= 6:
+                return SystemOutput(sys_input.power_output.power_balance - 1.0, sys_input.accumulator_power + 1)
+            else:
+                return SystemOutput(7 - sys_input.accumulator_power + sys_input.power_output.power_balance, 7)
 
         return SystemOutput(
             sys_input.power_output.power_balance, sys_input.accumulator_power
