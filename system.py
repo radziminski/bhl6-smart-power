@@ -40,11 +40,10 @@ def compute_power_balance(
         desired_temp=radiator_svc.determine_desired_temperature(date),
         outside_temp=outside_temp,
     )
-    temps_power_control = radiator_svc.temp2temp_control(curr_temp)
+    temps_power_control = radiator_svc.temp2temp_control(outside_temp)
     radiator_power = radiator_svc.compute_radiator_usage_result(
         temps, temps_power_control, 10.0 - water_power
     )
-    print(radiator_power.output_temperature)
 
     other_dev_power = other_svc.power_of_other_devices(
         date, date + OPTIMIZED_TIME_PERIOD

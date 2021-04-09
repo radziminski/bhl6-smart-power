@@ -5,7 +5,7 @@ import system as sys
 
 def main():
     sys_output, temp = sys.system_iterate(datetime.datetime.now(
-    ), 23.0, 10.0, 0.5, sys.PowerConsumptionSystemMode.Mode1, 0.0)
+    ), 24.0, 10.0, 0.5, sys.PowerConsumptionSystemMode.Mode1, 0.0)
 
     print(sys_output)
     print(temp)
