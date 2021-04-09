@@ -1,6 +1,13 @@
 import power_computation.radiator_power_consumption as rad_pow
 import datetime
 import system as sys
+from typing import List
+
+SERIES_LENGTH = 5
+
+
+def build_sequences(series_length: int = SERIES_LENGTH) -> List[List[sys.PowerConsumptionSystemMode]]:
+    pass
 
 
 def main():
