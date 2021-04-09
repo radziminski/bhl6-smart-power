@@ -30,6 +30,6 @@ def power_of_other_devices(start_time, end_time):
     for delta_time in range(time_diff.seconds):
         future_time = datetime.timedelta(hours=delta_time)
         future_time_and_date = start_time + future_time
-        retv += value[future_time_and_date.weekday()][str(future_time_and_date.hour)]
+        retv += value_table[future_time_and_date.weekday()][str(future_time_and_date.hour)]
 
     return retv
