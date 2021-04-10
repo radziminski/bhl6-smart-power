@@ -16,7 +16,6 @@ const Root = styled.div`
   margin-right: 2rem;
   padding: 2rem;
   margin-left: 1rem;
-s
 `;
 
 const IconBox = styled.div`

@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { COLORS } from 'styles/theme';
 import { BiRefresh } from 'react-icons/bi';
+import { useHistory } from 'react-router';
 
 const Root = styled.div`
   background: linear-gradient(
@@ -49,26 +50,24 @@ const PropTitle = styled.p`
 `;
 
 interface Props {
-  mode: 0 | 1 | 2 | 3;
+  mode?: 0 | 1 | 2 | 3;
+  isLoadingExt: boolean;
 }
 
-const CurrModeBox: React.FC<Props> = ({ mode }) => {
+const CurrModeBox: React.FC<Props> = ({ mode, isLoadingExt }) => {
   const [isLoading, setIsLoading] = useState(false);
-
+  const history = useHistory();
   const fetchCurrMode = async () => {
     setIsLoading(true);
 
     setTimeout(() => setIsLoading(false), 1500);
   };
 
-  useEffect(() => {
-    fetchCurrMode();
-  }, []);
-
-  const currMode = POWER_CONSUMPTION_MODES[mode];
+  const currMode =
+    mode || mode === 0 ? POWER_CONSUMPTION_MODES[mode] : undefined;
   return (
     <Root>
-      {!isLoading ? (
+      {!isLoading && !isLoadingExt && currMode ? (
         <>
           <Title>Current running mode:</Title>
           <Mode>{currMode.title}</Mode>
@@ -100,6 +99,7 @@ const CurrModeBox: React.FC<Props> = ({ mode }) => {
               fontSize: '0.8rem',
               cursor: 'pointer'
             }}
+            onClick={() => history.push('/dashboard/mode')}
           >
             details &rarr;
           </Box>
