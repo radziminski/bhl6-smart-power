@@ -4,7 +4,7 @@ import datetime
 import random
 
 
-from power_computation.water_power_service import is_hour_for_water_heating
+import power_computation.water_power_service as water_svc
 
 
 class WaterBank:
@@ -12,12 +12,14 @@ class WaterBank:
         self.max_capacity = max_capacity
 
     def get_water_level(self, date: datetime.datetime) -> float:
-        if not is_hour_for_water_heating(date):
-            return self.max_capacity
+        if water_svc.is_hour_for_water_heating(date):
+            ret_value = date.minute / 60 * self.max_capacity
+            return ret_value
 
-        mocked_level_drop = date.minute / 60 * self.max_capacity
+        working_hours = water_svc.last_full_capacity_hour_with_respect(date)
+        ret_value = self.max_capacity - working_hours / 20 * self.max_capacity
 
-        return self.max_capacity - mocked_level_drop
+        return ret_value
 
 
 @dataclass
