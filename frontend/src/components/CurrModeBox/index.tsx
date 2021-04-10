@@ -49,12 +49,12 @@ const PropTitle = styled.p`
 `;
 
 interface Props {
-  mode: 0 | 1 | 2 | 3;
+  mode?: 0 | 1 | 2 | 3;
+  isLoadingExt: boolean;
 }
 
-const CurrModeBox: React.FC<Props> = ({ mode }) => {
+const CurrModeBox: React.FC<Props> = ({ mode, isLoadingExt }) => {
   const [isLoading, setIsLoading] = useState(false);
-
   const fetchCurrMode = async () => {
     setIsLoading(true);
 
@@ -65,10 +65,12 @@ const CurrModeBox: React.FC<Props> = ({ mode }) => {
     fetchCurrMode();
   }, []);
 
-  const currMode = POWER_CONSUMPTION_MODES[mode];
+  console.log('MODE', mode);
+
+  const currMode = mode ? POWER_CONSUMPTION_MODES[mode] : undefined;
   return (
     <Root>
-      {!isLoading ? (
+      {!isLoading && !isLoadingExt && currMode ? (
         <>
           <Title>Current running mode:</Title>
           <Mode>{currMode.title}</Mode>
