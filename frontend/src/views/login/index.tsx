@@ -55,7 +55,7 @@ const Accent = styled.span`
     ${(props) => props.theme.colors.accentLight},
     ${(props) => props.theme.colors.accent}
   );
-  -webkit-background-clip: text;
+  background-clip: text;
   -webkit-text-fill-color: transparent;
 `;
 

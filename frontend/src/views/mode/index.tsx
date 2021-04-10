@@ -111,6 +111,8 @@ const ModeView: React.FC = () => {
   const mode =
     currMode || currMode === 0 ? POWER_CONSUMPTION_MODES[currMode] : undefined;
 
+  const currDate = new Date();
+
   return (
     <>
       <ContentHeader>
@@ -145,7 +147,12 @@ const ModeView: React.FC = () => {
                   <StepLine />
                   {i !== (simsContext?.value?.length || 1) - 1 && (
                     <StepContainer>
-                      <Box marginBottom='0.3rem'>Date:</Box>
+                      <Box marginBottom='0.3rem'>
+                        {currDate.getHours() + i < 24
+                          ? currDate.getHours() + i
+                          : currDate.getHours() + i - 24}
+                        :00
+                      </Box>
                       <Box marginBottom='0.3rem'>
                         {el.mode
                           ? POWER_CONSUMPTION_MODES[el.mode - 1].title
