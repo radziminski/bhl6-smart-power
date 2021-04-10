@@ -67,7 +67,8 @@ const CurrModeBox: React.FC<Props> = ({ mode, isLoadingExt }) => {
 
   console.log('MODE', mode);
 
-  const currMode = mode ? POWER_CONSUMPTION_MODES[mode] : undefined;
+  const currMode =
+    mode || mode === 0 ? POWER_CONSUMPTION_MODES[mode] : undefined;
   return (
     <Root>
       {!isLoading && !isLoadingExt && currMode ? (

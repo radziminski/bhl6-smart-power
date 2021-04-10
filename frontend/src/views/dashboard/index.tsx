@@ -115,6 +115,7 @@ const CurrLoader: React.FC = () => (
 );
 
 const MAX_WATER_LEVEL = 150;
+const MAX_ACC_LEVEL = 7;
 
 const DashboardView: React.FC = () => {
   const currDay = new Date();
@@ -155,9 +156,10 @@ const DashboardView: React.FC = () => {
     if (simsContext?.value) {
       console.log(simsContext.value[0].mode - 1);
 
-      console.log(simsContext.value);
-      setAccLevel(simsContext.value[0].accumulator);
+      setAccLevel(simsContext.value[0].accumulator / MAX_ACC_LEVEL);
       setCurrMode((simsContext.value[0].mode - 1) as 0 | 1 | 2 | 3);
+      setInsideTemp(Math.round(simsContext.value[0].curr_temp));
+      setOutsideTemp(Math.round(simsContext.value[0].outside_temp));
     }
   }, [simsContext]);
 
@@ -178,31 +180,32 @@ const DashboardView: React.FC = () => {
         <CurrLoader />
       )
     },
-    {
-      icon: <BiSun />,
-      title: 'Photovoltaics',
-      content: photovoltaics ? (
-        <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
-          <LabelSmall>Current power output: </LabelSmall>
-          <LabelBig>20kW</LabelBig>
-        </Box>
-      ) : (
-        <CurrLoader />
-      )
-    },
+    // {
+    //   icon: <BiSun />,
+    //   title: 'Photovoltaics',
+    //   content: photovoltaics ? (
+    //     <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
+    //       <LabelSmall>Current power output: </LabelSmall>
+    //       <LabelBig>20kW</LabelBig>
+    //     </Box>
+    //   ) : (
+    //     <CurrLoader />
+    //   )
+    // },
     {
       icon: <BsBatteryCharging />,
       title: 'Accumulator Charge',
-      content: accLevel ? (
-        <ProgressBarBoxLabelBox>
-          <ProgressBarBox>
-            <ProgressBarContent height={20} />
-          </ProgressBarBox>
-          <Label>20%</Label>
-        </ProgressBarBoxLabelBox>
-      ) : (
-        <CurrLoader />
-      )
+      content:
+        accLevel || accLevel === 0 ? (
+          <ProgressBarBoxLabelBox>
+            <ProgressBarBox>
+              <ProgressBarContent height={accLevel || 2} />
+            </ProgressBarBox>
+            <Label>{accLevel}%</Label>
+          </ProgressBarBoxLabelBox>
+        ) : (
+          <CurrLoader />
+        )
     },
 
     {
@@ -211,7 +214,7 @@ const DashboardView: React.FC = () => {
       content: insideTemp ? (
         <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
           <LabelSmall>Current home temperature: </LabelSmall>
-          <LabelBig>28°C</LabelBig>
+          <LabelBig>{insideTemp}°C</LabelBig>
         </Box>
       ) : (
         <CurrLoader />
@@ -221,11 +224,13 @@ const DashboardView: React.FC = () => {
     {
       icon: <RiTempColdLine />,
       title: 'Outside temperature',
-      content: (
+      content: outsideTemp ? (
         <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
           <LabelSmall>Current outside temperature: </LabelSmall>
-          <LabelBig>28°C</LabelBig>
+          <LabelBig>{outsideTemp}°C</LabelBig>
         </Box>
+      ) : (
+        <CurrLoader />
       )
     }
   ];
@@ -244,7 +249,12 @@ const DashboardView: React.FC = () => {
           <DateBox>{currDay.toDateString()}</DateBox>
         </ContentHeader>
         <FlexBox>
-          {<CurrModeBox mode={currMode} isLoadingExt={!currMode} />}
+          {
+            <CurrModeBox
+              mode={currMode}
+              isLoadingExt={currMode !== 0 && !currMode}
+            />
+          }
         </FlexBox>
         <TouchScroll>
           {widgets.map((widget) => (

@@ -43,6 +43,7 @@ const Icon = styled.div<{ selected?: boolean }>`
 
 const SideNav = () => {
   const [selected, setSelected] = useState(0);
+
   return (
     <Root>
       <Logo />
