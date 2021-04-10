@@ -10,6 +10,7 @@ import device_mocks as dmocks
 
 SERIES_LENGTH = 5
 
+
 def build_sequences(
     series_length: int = SERIES_LENGTH,
 ) -> List[List[sys.PowerConsumptionSystemMode]]:
@@ -23,9 +24,10 @@ def build_sequences(
     return [seq for seq in itertools.product(modes, repeat=SERIES_LENGTH)]
 
 
-ACCUMULATOR = dmocks.Accumulator(0.0)
+ACCUMULATOR = dmocks.Accumulator(2.0)
 OUTSIDE_TERMOMETER = dmocks.OutsideThermometer(datetime.datetime.now())
-INSIDE_TERMOMETER = dmocks.InsideThermometer(21)
+INSIDE_TERMOMETER = dmocks.InsideThermometer(20)
+
 
 def plan_next_sequence():
     response = wapi.get_weather_parameters()
@@ -60,9 +62,11 @@ def plan_next_sequence():
                     "net_power_used": 0.0
                 })
 
-            sys_out, new_temp = sys.system_iterate(date, curr_temp, outside_temp, clouding, mode, accumulator)
+            sys_out, new_temp = sys.system_iterate(
+                date, curr_temp, outside_temp, clouding, mode, accumulator)
 
-            net_power_cost = ec.get_energy_cost(date, sys_out.net_power_balance, mode)
+            net_power_cost = ec.get_energy_cost(
+                date, sys_out.net_power_balance, mode)
             net_total_power_cost += net_power_cost
 
             date = date + datetime.timedelta(hours=1)

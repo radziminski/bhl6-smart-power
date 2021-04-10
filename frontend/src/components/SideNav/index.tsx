@@ -80,9 +80,9 @@ const SideNav = () => {
       >
         <IoIosStats />
       </Icon>
-      <Icon selected={selected === 2} onClick={() => setSelected(2)}>
+      {/* <Icon selected={selected === 2} onClick={() => setSelected(2)}>
         <BsPersonLinesFill />
-      </Icon>
+      </Icon> */}
       <Box
         marginY='2rem'
         marginTop='auto'
