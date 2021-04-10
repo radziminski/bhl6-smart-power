@@ -4,6 +4,9 @@ import { GlobalStyles } from 'styles/global';
 import { defaultTheme } from 'styles/theme';
 import { ISimIteration } from 'types';
 import DashboardView from 'views/dashboard';
+import { BrowserRouter, Switch, Route } from 'react-router-dom';
+import Layout from 'views/Layout';
+import ModeView from 'views/mode';
 
 export const CurrSimulationContext = React.createContext<{
   value: ISimIteration[] | undefined;
@@ -15,14 +18,25 @@ const App: React.FC = () => {
 
   return (
     <div className='App'>
-      <ThemeProvider theme={defaultTheme}>
-        <CurrSimulationContext.Provider
-          value={{ value: currSim, set: setCurrSim }}
-        >
-          <GlobalStyles />
-          <DashboardView />
-        </CurrSimulationContext.Provider>
-      </ThemeProvider>
+      <BrowserRouter>
+        <ThemeProvider theme={defaultTheme}>
+          <CurrSimulationContext.Provider
+            value={{ value: currSim, set: setCurrSim }}
+          >
+            <GlobalStyles />
+            <Layout>
+              <Switch>
+                <Route path='/' exact>
+                  <DashboardView />
+                </Route>
+                <Route path='/mode' exact>
+                  <ModeView />
+                </Route>
+              </Switch>
+            </Layout>
+          </CurrSimulationContext.Provider>
+        </ThemeProvider>
+      </BrowserRouter>
     </div>
   );
 };

@@ -14,21 +14,6 @@ import Loader from 'components/Loader';
 import { BASE_URL } from 'constant-values';
 import { CurrSimulationContext } from 'App';
 
-const Root = styled.div`
-  background-color: ${(props) => props.theme.colors.whiteTint};
-  position: relative;
-  height: 100vh;
-  width: 100%;
-  padding-right: ${SIDEBAR_WIDTH}rem;
-  display: flex;
-`;
-
-const Content = styled.div`
-  padding: 4rem;
-  width: 100%;
-  height: 100%;
-`;
-
 const ContentHeader = styled.div`
   display: flex;
   width: 100%;
@@ -148,22 +133,25 @@ const DashboardView: React.FC = () => {
   };
 
   useEffect(() => {
-    fetchWaterLevel();
-    fetchSimulation();
+    if (!waterLevel) fetchWaterLevel();
+    if (!simsContext?.value) fetchSimulation();
   }, []);
 
   useEffect(() => {
     if (simsContext?.value) {
       console.log(simsContext.value[0].mode - 1);
 
-      setAccLevel(simsContext.value[0].accumulator / MAX_ACC_LEVEL);
+      setAccLevel(
+        Math.round((simsContext.value[0].accumulator * 100) / MAX_ACC_LEVEL) /
+          100
+      );
       setCurrMode((simsContext.value[0].mode - 1) as 0 | 1 | 2 | 3);
       setInsideTemp(Math.round(simsContext.value[0].curr_temp));
       setOutsideTemp(Math.round(simsContext.value[0].outside_temp));
     }
   }, [simsContext]);
 
-  console.log(waterLevel);
+  console.log(accLevel);
 
   const widgets = [
     {
@@ -180,18 +168,7 @@ const DashboardView: React.FC = () => {
         <CurrLoader />
       )
     },
-    // {
-    //   icon: <BiSun />,
-    //   title: 'Photovoltaics',
-    //   content: photovoltaics ? (
-    //     <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
-    //       <LabelSmall>Current power output: </LabelSmall>
-    //       <LabelBig>20kW</LabelBig>
-    //     </Box>
-    //   ) : (
-    //     <CurrLoader />
-    //   )
-    // },
+
     {
       icon: <BsBatteryCharging />,
       title: 'Accumulator Charge',
@@ -236,41 +213,37 @@ const DashboardView: React.FC = () => {
   ];
 
   return (
-    <Root>
-      <SideNav />
-      <Content>
-        <ContentHeader>
-          <Box>
-            <Title>Good morning!</Title>
-            <SubTitle>
-              Here you can find information about your heating systems
-            </SubTitle>
-          </Box>
-          <DateBox>{currDay.toDateString()}</DateBox>
-        </ContentHeader>
-        <FlexBox>
-          {
-            <CurrModeBox
-              mode={currMode}
-              isLoadingExt={currMode !== 0 && !currMode}
-            />
-          }
-        </FlexBox>
-        <TouchScroll>
-          {widgets.map((widget) => (
-            <WidgetCard
-              key={widget.title}
-              icon={widget.icon}
-              title={widget.title}
-            >
-              {widget.content}
-            </WidgetCard>
-          ))}
-          <Box width='4rem' />
-        </TouchScroll>
-      </Content>
-      <SideBar />
-    </Root>
+    <>
+      <ContentHeader>
+        <Box>
+          <Title>Good morning!</Title>
+          <SubTitle>
+            Here you can find information about your heating systems
+          </SubTitle>
+        </Box>
+        <DateBox>{currDay.toDateString()}</DateBox>
+      </ContentHeader>
+      <FlexBox>
+        {
+          <CurrModeBox
+            mode={currMode}
+            isLoadingExt={currMode !== 0 && !currMode}
+          />
+        }
+      </FlexBox>
+      <TouchScroll>
+        {widgets.map((widget) => (
+          <WidgetCard
+            key={widget.title}
+            icon={widget.icon}
+            title={widget.title}
+          >
+            {widget.content}
+          </WidgetCard>
+        ))}
+        <Box width='4rem' />
+      </TouchScroll>
+    </>
   );
 };
 

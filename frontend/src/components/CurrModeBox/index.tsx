@@ -5,6 +5,7 @@ import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { COLORS } from 'styles/theme';
 import { BiRefresh } from 'react-icons/bi';
+import { useHistory } from 'react-router';
 
 const Root = styled.div`
   background: linear-gradient(
@@ -55,17 +56,12 @@ interface Props {
 
 const CurrModeBox: React.FC<Props> = ({ mode, isLoadingExt }) => {
   const [isLoading, setIsLoading] = useState(false);
+  const history = useHistory();
   const fetchCurrMode = async () => {
     setIsLoading(true);
 
     setTimeout(() => setIsLoading(false), 1500);
   };
-
-  useEffect(() => {
-    fetchCurrMode();
-  }, []);
-
-  console.log('MODE', mode);
 
   const currMode =
     mode || mode === 0 ? POWER_CONSUMPTION_MODES[mode] : undefined;
@@ -103,6 +99,7 @@ const CurrModeBox: React.FC<Props> = ({ mode, isLoadingExt }) => {
               fontSize: '0.8rem',
               cursor: 'pointer'
             }}
+            onClick={() => history.push('/mode')}
           >
             details &rarr;
           </Box>

@@ -84,8 +84,8 @@ const SideBar = () => {
   const [forecast, setForecast] = useState<IWeatherDay[]>();
 
   const fetchForecast = async () => {
-    const response = await axios.get(`${BASE_URL}/weather_forecast`);
-    setForecast(response.data);
+    // const response = await axios.get(`${BASE_URL}/weather_forecast`);
+    // setForecast(response.data);
   };
 
   useEffect(() => {
@@ -131,8 +131,7 @@ const SideBar = () => {
             {forecast.map((el) => {
               const date = new Date(el.time * 1000);
               return (
-                <ForecastCard>
-                  {console.log(el)}
+                <ForecastCard key={el.time}>
                   {date.toISOString().substring(0, 16).replace('T', ' ')}
                   <Box>
                     <FlexBox>

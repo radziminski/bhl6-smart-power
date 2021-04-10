@@ -7,6 +7,7 @@ import { IoIosStats } from 'react-icons/io';
 import { BsPersonLinesFill } from 'react-icons/bs';
 import { HiOutlineLogout } from 'react-icons/hi';
 import { COLORS } from 'styles/theme';
+import { useHistory } from 'react-router';
 
 const Root = styled.div`
   height: 100%;
@@ -43,6 +44,7 @@ const Icon = styled.div<{ selected?: boolean }>`
 
 const SideNav = () => {
   const [selected, setSelected] = useState(0);
+  const history = useHistory();
 
   return (
     <Root>
@@ -54,10 +56,22 @@ const SideNav = () => {
         background={COLORS.primary}
         opacity={0.15}
       />
-      <Icon selected={selected === 0} onClick={() => setSelected(0)}>
+      <Icon
+        selected={selected === 0}
+        onClick={() => {
+          setSelected(0);
+          history.push('/');
+        }}
+      >
         <RiDashboardFill />
       </Icon>
-      <Icon selected={selected === 1} onClick={() => setSelected(1)}>
+      <Icon
+        selected={selected === 1}
+        onClick={() => {
+          setSelected(1);
+          history.push('/mode');
+        }}
+      >
         <IoIosStats />
       </Icon>
       <Icon selected={selected === 2} onClick={() => setSelected(2)}>
