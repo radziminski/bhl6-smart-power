@@ -84,8 +84,7 @@ def process_system(sys_input: SystemInput) -> SystemOutput:
             acc_power_gain = min(1, sys_input.power_output.power_balance)
 
             return SystemOutput(
-                0.0, min(
-                    10.0, min(sys_input.accumulator_power + acc_power_gain, 7))
+                0.0, min(10.0, min(sys_input.accumulator_power + acc_power_gain, 7))
             )
         else:
             return SystemOutput(

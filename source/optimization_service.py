@@ -6,6 +6,7 @@ import power_computation.radiator_power_consumption as rad_pow
 import weather_requests as wapi
 import power_system as sys
 import energy_cost_computation as ec
+import device_mocks as dmocks
 
 SERIES_LENGTH = 5
 
@@ -22,21 +23,16 @@ def build_sequences(
 
     return [seq for seq in itertools.product(modes, repeat=SERIES_LENGTH)]
 
-
-class TemperatureSensor:
-    def get_temperature(self):
-        return 9.0
-
+ACCUMULATOR = dmocks.Accumulator(0.0)
 
 def plan_next_sequence():
     response = wapi.get_weather_parameters()
-    temp_sensor = TemperatureSensor()
 
-    initial_date = datetime.datetime(2020, 12, 1, 12, 0, 0) # o 1h
-    initial_curr_temp = 23.0
-    initial_outside_temp = temp_sensor.get_temperature()
-    initial_clouding =  1 - (response[0]["clouds"] / 100.0) # z api
-    initial_accumulator = 0.0
+    initial_date = datetime.datetime(2020, 1, 1, 12, 30, 0)
+    initial_curr_temp = 24.0
+    # initial_outside_temp = temp_sensor.get_temperature()
+    # initial_clouding =  1 - (response[0]["clouds"] / 100.0) # z api
+    initial_accumulator = ACCUMULATOR.power
 
     best_sequence = None   # jaki ustawić mode
     best_run_params = None
@@ -50,7 +46,7 @@ def plan_next_sequence():
 
         algorithm_run = []
         for index, mode in enumerate(modes_sequence):
-            outside_temp = response[index]["temperature"] if index != 0 else initial_outside_temp
+            outside_temp = response[index]["temperature"] #if index != 0 else initial_outside_temp
             clouding = 1 - (response[index]["clouds"] / 100.0)
 
             if index == 0:
@@ -88,6 +84,7 @@ def plan_next_sequence():
             best_sequence = modes_sequence
             best_run_params = algorithm_run
 
+    ACCUMULATOR.power = best_run_params[1]["accumulator"]
     return best_sequence, algorithm_run
 
 

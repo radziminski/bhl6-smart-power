@@ -58,7 +58,7 @@ class LightSensor:
         return self.lightness
 
 
-if __name__ == "__main__":
+# if __name__ == "__main__":
     # thermometer = OutsideThermometer(datetime.datetime.now())
     # print(thermometer.get_current_temperature())
     # print(thermometer.get_current_temperature())
