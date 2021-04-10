@@ -25,7 +25,7 @@ def build_sequences(
 
 ACCUMULATOR = dmocks.Accumulator(0.0)
 OUTSIDE_TERMOMETER = dmocks.OutsideThermometer(datetime.datetime.now())
-INSIDE_TERMOMETER = dmocks.InsideThermometer(OUTSIDE_TERMOMETER.get_current_temperature() + 0.1)
+INSIDE_TERMOMETER = dmocks.InsideThermometer(21)
 
 def plan_next_sequence():
     response = wapi.get_weather_parameters()
