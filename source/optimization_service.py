@@ -10,7 +10,6 @@ import device_mocks as dmocks
 
 SERIES_LENGTH = 5
 
-
 def build_sequences(
     series_length: int = SERIES_LENGTH,
 ) -> List[List[sys.PowerConsumptionSystemMode]]:
@@ -23,12 +22,14 @@ def build_sequences(
 
     return [seq for seq in itertools.product(modes, repeat=SERIES_LENGTH)]
 
+
 ACCUMULATOR = dmocks.Accumulator(0.0)
+OUTSIDE_TERMOMETER = dmocks.OutsideThermometer(datetime.datetime.now())
+INSIDE_TERMOMETER = dmocks.InsideThermometer()
 
 def plan_next_sequence():
     response = wapi.get_weather_parameters()
 
-    initial_date = datetime.datetime(2020, 1, 1, 12, 30, 0)
     initial_curr_temp = 24.0
     # initial_outside_temp = temp_sensor.get_temperature()
     # initial_clouding =  1 - (response[0]["clouds"] / 100.0) # z api
@@ -40,13 +41,13 @@ def plan_next_sequence():
     for modes_sequence in build_sequences():
         net_total_power_cost = 0.0
 
-        date = initial_date
+        date = datetime.datetime.now()
         curr_temp = initial_curr_temp
         accumulator = initial_accumulator
 
         algorithm_run = []
         for index, mode in enumerate(modes_sequence):
-            outside_temp = response[index]["temperature"] #if index != 0 else initial_outside_temp
+            outside_temp = response[index]["temperature"] if index != 0 else OUTSIDE_TERMOMETER.get_current_temperature()
             clouding = 1 - (response[index]["clouds"] / 100.0)
 
             if index == 0:

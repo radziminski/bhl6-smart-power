@@ -56,19 +56,3 @@ class LightSensor:
         self.lightness = max(self.lightness, 0)
 
         return self.lightness
-
-
-# if __name__ == "__main__":
-    # thermometer = OutsideThermometer(datetime.datetime.now())
-    # print(thermometer.get_current_temperature())
-    # print(thermometer.get_current_temperature())
-    # print(thermometer.get_current_temperature())
-    # print(thermometer.get_current_temperature())
-    # print(thermometer.get_current_temperature())
-    # print(thermometer.get_current_temperature())
-    # light = LightSensor()
-    # print(light.get_lightness())
-    # print(light.get_lightness())
-    # print(light.get_lightness())
-    # print(light.get_lightness())
-    # print(light.get_lightness())
