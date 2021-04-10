@@ -60,9 +60,7 @@ def plan_next_sequence():
                     "net_power_used": 0.0
                 })
 
-            sys_out, new_temp = sys.system_iterate(
-                date, curr_temp, outside_temp, clouding, mode, accumulator
-            )
+            sys_out, new_temp = sys.system_iterate(date, curr_temp, outside_temp, clouding, mode, accumulator)
 
             net_power_cost = ec.get_energy_cost(date, sys_out.net_power_balance, mode)
             net_total_power_cost += net_power_cost
@@ -70,6 +68,9 @@ def plan_next_sequence():
             date = date + datetime.timedelta(hours=1)
             curr_temp = new_temp
             accumulator = sys_out.accumulator_power
+
+            if mode == sys.PowerConsumptionSystemMode.Mode3:
+                x = 1
 
             algorithm_run.append({
                 "outside_temp": response[index+1]["temperature"],
@@ -88,7 +89,7 @@ def plan_next_sequence():
     INSIDE_TERMOMETER.set_temperature(best_run_params[1]["curr_temp"])
     ACCUMULATOR.power = best_run_params[1]["accumulator"]
 
-    return best_sequence, algorithm_run
+    return best_sequence, best_run_params
 
 
 def main():
