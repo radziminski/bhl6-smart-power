@@ -32,9 +32,10 @@ def plan_next_sequence():
 
     initial_curr_temp = INSIDE_TERMOMETER.get_current_temperature()
     initial_outside_temp = OUTSIDE_TERMOMETER.get_current_temperature()
-    initial_accumulator = ACCUMULATOR.power
+    from copy import deepcopy
+    initial_accumulator = deepcopy(ACCUMULATOR.power)
 
-    best_sequence = None   # jaki ustawić mode
+    best_sequence = None
     best_run_params = None
     min_net_total_cost = float("inf")
     for modes_sequence in build_sequences():
@@ -42,7 +43,7 @@ def plan_next_sequence():
 
         date = datetime.datetime.now()
         curr_temp = initial_curr_temp
-        accumulator = initial_accumulator
+        accumulator = deepcopy(initial_accumulator)
 
         algorithm_run = []
         for index, mode in enumerate(modes_sequence):
@@ -86,6 +87,7 @@ def plan_next_sequence():
 
     INSIDE_TERMOMETER.set_temperature(best_run_params[1]["curr_temp"])
     ACCUMULATOR.power = best_run_params[1]["accumulator"]
+
     return best_sequence, algorithm_run
 
 

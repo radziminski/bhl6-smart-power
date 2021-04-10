@@ -69,13 +69,9 @@ class SystemOutput:
 
 def process_system(sys_input: SystemInput) -> SystemOutput:
     if sys_input.power_output.power_balance >= 0.0:
-        if sys_input.sys_mode in [
-            PowerConsumptionSystemMode.Mode4,
-        ]:
+        if sys_input.sys_mode == PowerConsumptionSystemMode.Mode4:
             return SystemOutput(0.0, sys_input.accumulator_power)
-        if sys_input.sys_mode in [
-            PowerConsumptionSystemMode.Mode3,
-        ]:
+        if sys_input.sys_mode == PowerConsumptionSystemMode.Mode3:
             if sys_input.accumulator_power <= 6:
                 return SystemOutput(-1.0, sys_input.accumulator_power + 1)
             else:
@@ -83,18 +79,12 @@ def process_system(sys_input: SystemInput) -> SystemOutput:
         elif sys_input.sys_mode == PowerConsumptionSystemMode.Mode1:
             acc_power_gain = min(1, sys_input.power_output.power_balance)
 
-            return SystemOutput(
-                0.0, min(10.0, min(sys_input.accumulator_power + acc_power_gain, 7))
-            )
+            return SystemOutput(0.0, min(10.0, min(sys_input.accumulator_power + acc_power_gain, 7)))
         else:
-            return SystemOutput(
-                sys_input.power_output.power_balance, sys_input.accumulator_power
-            )
+            return SystemOutput(sys_input.power_output.power_balance, sys_input.accumulator_power)
     else:
         if sys_input.sys_mode == PowerConsumptionSystemMode.Mode4:
-            new_accumulator_power_diff = (
-                sys_input.accumulator_power + sys_input.power_output.power_balance
-            )
+            new_accumulator_power_diff = (sys_input.accumulator_power + sys_input.power_output.power_balance)
 
             if new_accumulator_power_diff > 0:
                 return SystemOutput(0.0, new_accumulator_power_diff)
@@ -107,9 +97,8 @@ def process_system(sys_input: SystemInput) -> SystemOutput:
             else:
                 return SystemOutput(7 - sys_input.accumulator_power + sys_input.power_output.power_balance, 7)
 
-        return SystemOutput(
-            sys_input.power_output.power_balance, sys_input.accumulator_power
-        )
+
+        return SystemOutput(sys_input.power_output.power_balance, sys_input.accumulator_power)
 
 
 def system_iterate(
