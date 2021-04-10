@@ -34,7 +34,9 @@ def get_water_level() -> None:
 
 @app.route("/accumulator")
 def current_accumulator_power() -> None:
-    pass
+    power = svc.ACCUMULATOR.power
+
+    return flask.jsonify({"power": power})
 
 
 @app.route("/weather_forecast")
