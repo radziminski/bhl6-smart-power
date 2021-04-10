@@ -84,8 +84,8 @@ const SideBar = () => {
   const [forecast, setForecast] = useState<IWeatherDay[]>();
 
   const fetchForecast = async () => {
-    // const response = await axios.get(`${BASE_URL}/weather_forecast`);
-    // setForecast(response.data);
+    const response = await axios.get(`${BASE_URL}/weather_forecast`);
+    setForecast(response.data);
   };
 
   useEffect(() => {
