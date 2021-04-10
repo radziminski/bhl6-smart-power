@@ -17,7 +17,6 @@ import {
   PositionProps,
   space,
   SpaceProps,
-  system,
   textAlign,
   TextAlignProps
 } from 'styled-system';

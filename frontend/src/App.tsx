@@ -3,7 +3,6 @@ import { ThemeProvider } from 'styled-components';
 import { GlobalStyles } from 'styles/global';
 import { defaultTheme } from 'styles/theme';
 import DashboardView from 'views/dashboard';
-import HomeView from 'views/home';
 
 const App: React.FC = () => {
   return (
