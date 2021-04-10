@@ -99,7 +99,7 @@ const CurrModeBox: React.FC<Props> = ({ mode, isLoadingExt }) => {
               fontSize: '0.8rem',
               cursor: 'pointer'
             }}
-            onClick={() => history.push('/mode')}
+            onClick={() => history.push('/dashboard/mode')}
           >
             details &rarr;
           </Box>

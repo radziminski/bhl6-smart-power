@@ -19,7 +19,7 @@ const ContentHeader = styled.div`
   width: 100%;
   align-items: center;
   margin-bottom: 2rem;
-  padding-right: 6rem;
+  padding-right: 6.2rem;
 `;
 
 const DateBox = styled.div`
@@ -142,8 +142,7 @@ const DashboardView: React.FC = () => {
       console.log(simsContext.value[0].mode - 1);
 
       setAccLevel(
-        Math.round((simsContext.value[0].accumulator * 100) / MAX_ACC_LEVEL) /
-          100
+        Math.round((simsContext.value[0].accumulator * 100) / MAX_ACC_LEVEL)
       );
       setCurrMode((simsContext.value[0].mode - 1) as 0 | 1 | 2 | 3);
       setInsideTemp(Math.round(simsContext.value[0].curr_temp));

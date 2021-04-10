@@ -1,13 +1,13 @@
 import Box from 'components/Box';
 import Logo from 'components/Logo';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RiDashboardFill } from 'react-icons/ri';
 import { IoIosStats } from 'react-icons/io';
 import { BsPersonLinesFill } from 'react-icons/bs';
 import { HiOutlineLogout } from 'react-icons/hi';
 import { COLORS } from 'styles/theme';
-import { useHistory } from 'react-router';
+import { useHistory, useLocation } from 'react-router';
 
 const Root = styled.div`
   height: 100%;
@@ -45,6 +45,12 @@ const Icon = styled.div<{ selected?: boolean }>`
 const SideNav = () => {
   const [selected, setSelected] = useState(0);
   const history = useHistory();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (location.pathname.includes('mode')) setSelected(1);
+    else setSelected(0);
+  }, [location]);
 
   return (
     <Root>
@@ -69,7 +75,7 @@ const SideNav = () => {
         selected={selected === 1}
         onClick={() => {
           setSelected(1);
-          history.push('/mode');
+          history.push('/dashboard/mode');
         }}
       >
         <IoIosStats />
@@ -85,7 +91,7 @@ const SideNav = () => {
         background={COLORS.primary}
         opacity={0.15}
       />
-      <Icon>
+      <Icon onClick={() => history.push('/login')}>
         <HiOutlineLogout />
       </Icon>
     </Root>

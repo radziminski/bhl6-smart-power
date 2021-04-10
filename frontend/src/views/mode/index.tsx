@@ -145,14 +145,18 @@ const ModeView: React.FC = () => {
                   <StepLine />
                   {i !== (simsContext?.value?.length || 1) - 1 && (
                     <StepContainer>
-                      <Box>Date:</Box>
-                      <Box>
+                      <Box marginBottom='0.3rem'>Date:</Box>
+                      <Box marginBottom='0.3rem'>
                         {el.mode
                           ? POWER_CONSUMPTION_MODES[el.mode - 1].title
                           : POWER_CONSUMPTION_MODES[0].title}
                       </Box>
-                      <Box>{Math.round(el.net_power_used)}kW</Box>
-                      <Box>{Math.round(el.net_cost)}zł</Box>
+                      <Box marginBottom='0.3rem'>
+                        External power used: {Math.round(el.net_power_used)}kW
+                      </Box>
+                      <Box marginBottom='0.3rem'>
+                        Money spent: {Math.round(el.net_cost)}zł
+                      </Box>
                     </StepContainer>
                   )}
                   <FlexBox
