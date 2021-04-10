@@ -14,8 +14,7 @@ OPTIMIZED_TIME_PERIOD = datetime.timedelta(hours=1)  # 1h
 class PowerConsumptionSystemMode(IntEnum):
     Mode1 = 1  # main source: photovoltaics, under: net, over: accumulator
     Mode2 = 2  # main source: photovoltaics, under: net, over: net
-    # main source: photovoltaics, under: net, over: out (net->accumulator)
-    Mode3 = 3
+    Mode3 = 3  # main source: photovoltaics, under: net, over: out (net->accumulator)
     Mode4 = 4  # main source: photovoltaics & accumulator, under: net, over: out
 
 
