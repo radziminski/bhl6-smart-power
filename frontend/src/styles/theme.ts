@@ -7,7 +7,9 @@ export const COLORS = {
   whiteTint: '#F7F9FE',
   primary: '#3546AB',
   primaryDark: '#0D155A',
-  primaryMid: '#212E83'
+  primaryMid: '#212E83',
+  accent: '#EF582D',
+  accentLight: '#F78563'
 };
 
 export const RADII = {

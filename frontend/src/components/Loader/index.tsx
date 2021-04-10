@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-const Root = styled.div<{ size?: number }>`
+const Root = styled.div<{ size?: number; color?: string }>`
   display: inline-block;
   position: relative;
   width: ${(props) => props.size ?? 80}px;
@@ -15,11 +15,11 @@ const Root = styled.div<{ size?: number }>`
     height: ${(props) => (props.size ?? 80) - (props.size ?? 80) / 5}px;
     margin: ${(props) => (props.size ?? 80) / 10}px;
     border: ${(props) => (props.size ?? 80) / 10}px solid
-      ${(props) => props.theme.colors.primary};
+      ${(props) => props.color ?? props.theme.colors.primary};
     border-radius: 50%;
     animation: lds-ring 1.2s cubic-bezier(0.5, 0, 0.5, 1) infinite;
-    border-color: ${(props) => props.theme.colors.primary} transparent
-      transparent transparent;
+    border-color: ${(props) => props.color ?? props.theme.colors.primary}
+      transparent transparent transparent;
   }
   div:nth-child(1) {
     animation-delay: -0.45s;
@@ -40,9 +40,12 @@ const Root = styled.div<{ size?: number }>`
   }
 `;
 
-const Loader: React.FC<{ size?: number }> = ({ size }) => {
+const Loader: React.FC<{ size?: number; color?: string }> = ({
+  size,
+  color
+}) => {
   return (
-    <Root size={size}>
+    <Root size={size} color={color}>
       <div></div>
       <div></div>
       <div></div>

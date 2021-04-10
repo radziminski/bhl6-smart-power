@@ -1,5 +1,10 @@
-import React from 'react';
+import Box, { FlexBox } from 'components/Box';
+import Loader from 'components/Loader';
+import { POWER_CONSUMPTION_MODES } from 'constant-values/index';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
+import { COLORS } from 'styles/theme';
+import { BiRefresh } from 'react-icons/bi';
 
 const Root = styled.div`
   background: linear-gradient(
@@ -7,35 +12,103 @@ const Root = styled.div`
     ${(props) => props.theme.colors.primary} 30%,
     ${(props) => props.theme.colors.primaryMid}
   );
-  height: 14rem;
+  height: 15rem;
   border-radius: 1rem;
-  width: 30rem;
-  padding: 1.8rem;
+  width: 32rem;
+  padding: 1.5rem 1.8rem;
   margin-right: 2rem;
   box-shadow: 0 0.8rem 1rem rgba(138, 99, 99, 0.05);
   margin-bottom: 2rem;
+  display: flex;
+  flex-direction: column;
+  position: relative;
 `;
 
 const Title = styled.h3`
   margin: 0;
   font-size: 1rem;
-  font-weight: 400;
+  font-weight: 500;
   color: ${(props) => props.theme.colors.white};
 `;
 
 const Mode = styled.h4`
   margin: 0;
-  margin-top: 1rem;
+  margin-top: 0.8rem;
   font-size: 2rem;
-  font-weight: 500;
+  font-weight: 600;
   color: ${(props) => props.theme.colors.white};
 `;
 
-const CurrModeBox = () => {
+const PropTitle = styled.p`
+  margin: 0;
+  font-size: 0.9rem;
+  margin-top: 0.2rem;
+  font-weight: 300;
+  color: ${(props) => props.theme.colors.white};
+  flex-grow: 1;
+`;
+
+interface Props {
+  mode: 0 | 1 | 2 | 3;
+}
+
+const CurrModeBox: React.FC<Props> = ({ mode }) => {
+  const [isLoading, setIsLoading] = useState(false);
+
+  const fetchCurrMode = async () => {
+    setIsLoading(true);
+
+    setTimeout(() => setIsLoading(false), 1500);
+  };
+
+  useEffect(() => {
+    fetchCurrMode();
+  }, []);
+
+  const currMode = POWER_CONSUMPTION_MODES[mode];
   return (
     <Root>
-      <Title>Current running mode:</Title>
-      <Mode>Mode 1</Mode>
+      {!isLoading ? (
+        <>
+          <Title>Current running mode:</Title>
+          <Mode>{currMode.title}</Mode>
+          <FlexBox
+            flexDirection='column'
+            justifyContent='flex-end'
+            marginTop='auto'
+          >
+            {currMode.subTitles.map((subTitle) => (
+              <PropTitle key={subTitle}>{subTitle}</PropTitle>
+            ))}
+          </FlexBox>
+          <Box
+            position='absolute'
+            top='1.5rem'
+            right='1.5rem'
+            color={COLORS.whiteTint}
+            style={{ fontSize: '1.2rem', cursor: 'pointer' }}
+            onClick={fetchCurrMode}
+          >
+            <BiRefresh />
+          </Box>
+          <Box
+            position='absolute'
+            bottom='1.5rem'
+            right='1.5rem'
+            color={COLORS.whiteTint}
+            style={{
+              fontSize: '0.8rem',
+              cursor: 'pointer'
+            }}
+          >
+            details &rarr;
+          </Box>
+        </>
+      ) : (
+        <FlexBox justifyContent='center' alignItems='center' height='100%'>
+          <Loader color={COLORS.whiteTint} />
+        </FlexBox>
+      )}
     </Root>
   );
 };

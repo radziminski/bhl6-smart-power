@@ -1,10 +1,14 @@
 import Box, { FlexBox } from 'components/Box';
 import CurrModeBox from 'components/CurrModeBox';
-import ModeInfoBox from 'components/ModeInfoBox';
 import SideBar, { SIDEBAR_WIDTH } from 'components/SideBar';
 import SideNav from 'components/SideNav';
-import React from 'react';
+import TouchScroll from 'components/TouchScroll';
+import WidgetCard from 'components/WidgetCard';
+import React, { useState } from 'react';
 import styled from 'styled-components';
+import { RiWaterFlashLine, RiTempColdLine } from 'react-icons/ri';
+import { BiSun } from 'react-icons/bi';
+import { BsBatteryCharging } from 'react-icons/bs';
 
 const Root = styled.div`
   background-color: ${(props) => props.theme.colors.whiteTint};
@@ -49,8 +53,119 @@ const SubTitle = styled.h3`
   margin: 0;
 `;
 
+const ProgressBarBoxLabelBox = styled.div`
+  height: 100%;
+  position: relative;
+`;
+
+const ProgressBarBox = styled.div`
+  height: 90%;
+  border: 2px solid ${(props) => props.theme.colors.accentLight};
+  width: 5rem;
+  margin: 0 auto;
+  border-radius: 1rem;
+  overflow: hidden;
+  display: flex;
+  align-items: flex-end;
+`;
+
+const ProgressBarContent = styled.div<{ height: number }>`
+  height: ${(props) => props.height}%;
+  width: 100%;
+  background: linear-gradient(
+    to bottom,
+    ${(props) => props.theme.colors.accentLight},
+    ${(props) => props.theme.colors.accent}
+  );
+`;
+
+const Label = styled.div`
+  text-align: center;
+  font-size: 1.4rem;
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.accent};
+`;
+
+const LabelSmall = styled.div`
+  text-align: center;
+  font-size: 1.1rem;
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.accent};
+`;
+
+const LabelBig = styled.div`
+  text-align: center;
+  font-size: 1.8rem;
+  margin: 0.5rem 0 0;
+  font-weight: 600;
+  color: ${(props) => props.theme.colors.accent};
+`;
+
 const DashboardView: React.FC = () => {
   const currDay = new Date();
+  const [waterLevel, setWaterLevel] = useState<number>();
+  const [accLevel, setAccLevel] = useState<number>();
+
+  const widgets = [
+    {
+      icon: <RiWaterFlashLine />,
+      title: 'Water Level',
+      content: (
+        <ProgressBarBoxLabelBox>
+          <ProgressBarBox>
+            <ProgressBarContent height={70} />
+          </ProgressBarBox>
+          <Label>70%</Label>
+        </ProgressBarBoxLabelBox>
+      )
+    },
+    {
+      icon: <BiSun />,
+      title: 'Photovoltaics',
+      content: (
+        <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
+          <LabelSmall>Current power output: </LabelSmall>
+          <LabelBig>20kW</LabelBig>
+        </Box>
+      )
+    },
+    {
+      icon: <BsBatteryCharging />,
+      title: 'Accumulator Charge',
+      content: (
+        <ProgressBarBoxLabelBox>
+          <ProgressBarBox>
+            <ProgressBarContent height={20} />
+          </ProgressBarBox>
+          <Label>20%</Label>
+        </ProgressBarBoxLabelBox>
+      )
+    },
+
+    {
+      icon: <RiTempColdLine />,
+      title: 'Home temperature',
+      content: (
+        <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
+          <LabelSmall>Current home temperature: </LabelSmall>
+          <LabelBig>28°C</LabelBig>
+        </Box>
+      )
+    },
+
+    {
+      icon: <RiTempColdLine />,
+      title: 'Outside temperature',
+      content: (
+        <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
+          <LabelSmall>Current outside temperature: </LabelSmall>
+          <LabelBig>28°C</LabelBig>
+        </Box>
+      )
+    }
+  ];
 
   return (
     <Root>
@@ -66,9 +181,20 @@ const DashboardView: React.FC = () => {
           <DateBox>{currDay.toDateString()}</DateBox>
         </ContentHeader>
         <FlexBox>
-          <CurrModeBox />
+          <CurrModeBox mode={1} />
         </FlexBox>
-        <ModeInfoBox />
+        <TouchScroll>
+          {widgets.map((widget) => (
+            <WidgetCard
+              key={widget.title}
+              icon={widget.icon}
+              title={widget.title}
+            >
+              {widget.content}
+            </WidgetCard>
+          ))}
+          <Box width='4rem' />
+        </TouchScroll>
       </Content>
       <SideBar />
     </Root>
