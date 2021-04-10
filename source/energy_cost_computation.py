@@ -1,7 +1,7 @@
 import datetime
 from dataclasses import dataclass
 
-import system as sys
+import power_system as sys
 
 
 @dataclass
