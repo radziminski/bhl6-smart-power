@@ -25,14 +25,12 @@ def build_sequences(
 
 ACCUMULATOR = dmocks.Accumulator(0.0)
 OUTSIDE_TERMOMETER = dmocks.OutsideThermometer(datetime.datetime.now())
-INSIDE_TERMOMETER = dmocks.InsideThermometer()
+INSIDE_TERMOMETER = dmocks.InsideThermometer(12.0)
 
 def plan_next_sequence():
     response = wapi.get_weather_parameters()
 
-    initial_curr_temp = 24.0
-    # initial_outside_temp = temp_sensor.get_temperature()
-    # initial_clouding =  1 - (response[0]["clouds"] / 100.0) # z api
+    initial_curr_temp = INSIDE_TERMOMETER.get_current_temperature()
     initial_accumulator = ACCUMULATOR.power
 
     best_sequence = None   # jaki ustawić mode
@@ -85,6 +83,7 @@ def plan_next_sequence():
             best_sequence = modes_sequence
             best_run_params = algorithm_run
 
+    INSIDE_TERMOMETER.set_temperature(best_run_params[1]["curr_temp"])
     ACCUMULATOR.power = best_run_params[1]["accumulator"]
     return best_sequence, algorithm_run
 
