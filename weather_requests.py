@@ -30,7 +30,6 @@ def get_weather_parameters():
 
 
 if __name__ == "__main__":
-
     weather_props = get_weather_parameters()
 
     for elem in weather_props:
