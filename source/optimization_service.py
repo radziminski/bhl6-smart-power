@@ -31,6 +31,7 @@ def plan_next_sequence():
     response = wapi.get_weather_parameters()
 
     initial_curr_temp = INSIDE_TERMOMETER.get_current_temperature()
+    initial_outside_temp = OUTSIDE_TERMOMETER.get_current_temperature()
     initial_accumulator = ACCUMULATOR.power
 
     best_sequence = None   # jaki ustawić mode
@@ -45,9 +46,9 @@ def plan_next_sequence():
 
         algorithm_run = []
         for index, mode in enumerate(modes_sequence):
-            outside_temp = response[index]["temperature"] if index != 0 else OUTSIDE_TERMOMETER.get_current_temperature()
+            outside_temp = response[index]["temperature"] if index != 0 else initial_outside_temp
             clouding = 1 - (response[index]["clouds"] / 100.0)
-
+            # print(outside_temp)
             if index == 0:
                 algorithm_run.append({
                     "outside_temp": outside_temp,

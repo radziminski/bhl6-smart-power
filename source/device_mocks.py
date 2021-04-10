@@ -46,7 +46,7 @@ class OutsideThermometer:
 
     def get_current_temperature(self) -> float:
         chance = random.uniform(-1, 1)
-        self.outside_temp = self.outside_temp + chance * 2
+        self.outside_temp = self.outside_temp + chance * 0.5
         return self.outside_temp
 
 
