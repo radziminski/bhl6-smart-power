@@ -5,8 +5,9 @@ from typing import List, Tuple
 import power_computation.radiator_power_consumption as rad_pow
 import weather_requests as wapi
 import system as sys
+import energy_cost_computation as ec
 
-SERIES_LENGTH = 5
+SERIES_LENGTH = 6
 
 
 def build_sequences(
@@ -24,7 +25,7 @@ def build_sequences(
 
 class TemperatureSensor:
     def get_temperature(self):
-        return 0.0
+        return 7.0
 
 
 def get_next_system_state() -> sys.PowerConsumptionSystemMode:
@@ -38,9 +39,9 @@ def get_next_system_state() -> sys.PowerConsumptionSystemMode:
     initial_accumulator = 7.0
 
     next_sys_mode = None   # jaki ustawić mode
-    min_net_total_power_balance = -float("inf")
+    min_net_total_cost = float("inf")
     for modes_sequence in build_sequences():
-        net_total_power_balance = 0.0
+        net_total_power_cost = 0.0
 
         date = initial_date
         curr_temp = initial_curr_temp
@@ -54,14 +55,15 @@ def get_next_system_state() -> sys.PowerConsumptionSystemMode:
                 date, curr_temp, outside_temp, clouding, mode, accumulator
             )
 
+            net_total_power_cost += ec.get_energy_cost(date, sys_out.net_power_balance, mode)
+
             date = date + datetime.timedelta(hours=1)
             curr_temp = new_temp
             accumulator = sys_out.accumulator_power
 
-            net_total_power_balance += sys_out.net_power_balance
-
-        if net_total_power_balance > min_net_total_power_balance:
-            min_net_total_power_balance = net_total_power_balance
+        if net_total_power_cost < min_net_total_cost:
+            print(net_total_power_cost)
+            min_net_total_cost = net_total_power_cost
             next_sys_mode = modes_sequence[0]
 
     return next_sys_mode
