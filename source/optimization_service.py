@@ -62,7 +62,6 @@ def get_next_system_state() -> sys.PowerConsumptionSystemMode:
             accumulator = sys_out.accumulator_power
 
         if net_total_power_cost < min_net_total_cost:
-            print(net_total_power_cost)
             min_net_total_cost = net_total_power_cost
             next_sys_mode = modes_sequence[0]
 
