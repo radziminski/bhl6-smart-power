@@ -33,3 +33,5 @@ export const POWER_CONSUMPTION_MODES = [
     ]
   }
 ];
+
+export const BASE_URL = 'http://localhost:1234';

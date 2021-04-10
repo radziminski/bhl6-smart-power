@@ -1,35 +1,25 @@
 import Box, { FlexBox } from 'components/Box';
+import axios from 'axios';
 import CurrModeBox from 'components/CurrModeBox';
 import SideBar, { SIDEBAR_WIDTH } from 'components/SideBar';
 import SideNav from 'components/SideNav';
 import TouchScroll from 'components/TouchScroll';
 import WidgetCard from 'components/WidgetCard';
-import React, { useState } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { RiWaterFlashLine, RiTempColdLine } from 'react-icons/ri';
 import { BiSun } from 'react-icons/bi';
 import { BsBatteryCharging } from 'react-icons/bs';
-
-const Root = styled.div`
-  background-color: ${(props) => props.theme.colors.whiteTint};
-  position: relative;
-  height: 100vh;
-  width: 100%;
-  padding-right: ${SIDEBAR_WIDTH}rem;
-  display: flex;
-`;
-
-const Content = styled.div`
-  padding: 4rem;
-  width: 100%;
-  height: 100%;
-`;
+import Loader from 'components/Loader';
+import { BASE_URL } from 'constant-values';
+import { CurrSimulationContext } from 'App';
 
 const ContentHeader = styled.div`
   display: flex;
   width: 100%;
   align-items: center;
   margin-bottom: 2rem;
+  padding-right: 6.2rem;
 `;
 
 const DateBox = styled.div`
@@ -103,101 +93,156 @@ const LabelBig = styled.div`
   color: ${(props) => props.theme.colors.accent};
 `;
 
+const CurrLoader: React.FC = () => (
+  <FlexBox height='60%' justifyContent='center' alignItems='center'>
+    <Loader />
+  </FlexBox>
+);
+
+const MAX_WATER_LEVEL = 150;
+const MAX_ACC_LEVEL = 7;
+
 const DashboardView: React.FC = () => {
   const currDay = new Date();
   const [waterLevel, setWaterLevel] = useState<number>();
   const [accLevel, setAccLevel] = useState<number>();
+  const [photovoltaics, setPhotoVvltaics] = useState<number>();
+  const [insideTemp, setInsideTemp] = useState<number>();
+  const [outsideTemp, setOutsideTemp] = useState<number>();
+  const [currMode, setCurrMode] = useState<0 | 1 | 2 | 3>();
+  const simsContext = useContext(CurrSimulationContext);
+
+  const fetchWaterLevel = async () => {
+    const response = await axios.get(`${BASE_URL}/water_level`);
+    const water = (response.data.water_level * 100) / MAX_WATER_LEVEL;
+
+    setWaterLevel(water);
+  };
+
+  const fetchSimulation = async () => {
+    const response = await axios.get(`${BASE_URL}/plan_next_sequence`);
+    const sim = response.data.alg_run_params;
+
+    response.data.best_modes.forEach(
+      (mode: number, i: number) => (sim[i]['mode'] = mode)
+    );
+
+    console.log(sim);
+
+    simsContext?.set(sim);
+  };
+
+  useEffect(() => {
+    if (!waterLevel) fetchWaterLevel();
+    if (!simsContext?.value) fetchSimulation();
+  }, []);
+
+  useEffect(() => {
+    if (simsContext?.value) {
+      console.log(simsContext.value[0].mode - 1);
+
+      setAccLevel(
+        Math.round((simsContext.value[0].accumulator * 100) / MAX_ACC_LEVEL)
+      );
+      setCurrMode((simsContext.value[0].mode - 1) as 0 | 1 | 2 | 3);
+      setInsideTemp(Math.round(simsContext.value[0].curr_temp));
+      setOutsideTemp(Math.round(simsContext.value[0].outside_temp));
+    }
+  }, [simsContext]);
+
+  console.log(accLevel);
 
   const widgets = [
     {
       icon: <RiWaterFlashLine />,
       title: 'Water Level',
-      content: (
+      content: waterLevel ? (
         <ProgressBarBoxLabelBox>
           <ProgressBarBox>
-            <ProgressBarContent height={70} />
+            <ProgressBarContent height={waterLevel} />
           </ProgressBarBox>
-          <Label>70%</Label>
+          <Label>{waterLevel}%</Label>
         </ProgressBarBoxLabelBox>
+      ) : (
+        <CurrLoader />
       )
     },
-    {
-      icon: <BiSun />,
-      title: 'Photovoltaics',
-      content: (
-        <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
-          <LabelSmall>Current power output: </LabelSmall>
-          <LabelBig>20kW</LabelBig>
-        </Box>
-      )
-    },
+
     {
       icon: <BsBatteryCharging />,
       title: 'Accumulator Charge',
-      content: (
-        <ProgressBarBoxLabelBox>
-          <ProgressBarBox>
-            <ProgressBarContent height={20} />
-          </ProgressBarBox>
-          <Label>20%</Label>
-        </ProgressBarBoxLabelBox>
-      )
+      content:
+        accLevel || accLevel === 0 ? (
+          <ProgressBarBoxLabelBox>
+            <ProgressBarBox>
+              <ProgressBarContent height={accLevel || 2} />
+            </ProgressBarBox>
+            <Label>{accLevel}%</Label>
+          </ProgressBarBoxLabelBox>
+        ) : (
+          <CurrLoader />
+        )
     },
 
     {
       icon: <RiTempColdLine />,
       title: 'Home temperature',
-      content: (
+      content: insideTemp ? (
         <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
           <LabelSmall>Current home temperature: </LabelSmall>
-          <LabelBig>28°C</LabelBig>
+          <LabelBig>{insideTemp}°C</LabelBig>
         </Box>
+      ) : (
+        <CurrLoader />
       )
     },
 
     {
       icon: <RiTempColdLine />,
       title: 'Outside temperature',
-      content: (
+      content: outsideTemp ? (
         <Box margin='auto 1rem' style={{ transform: 'translateY(-1rem)' }}>
           <LabelSmall>Current outside temperature: </LabelSmall>
-          <LabelBig>28°C</LabelBig>
+          <LabelBig>{outsideTemp}°C</LabelBig>
         </Box>
+      ) : (
+        <CurrLoader />
       )
     }
   ];
 
   return (
-    <Root>
-      <SideNav />
-      <Content>
-        <ContentHeader>
-          <Box>
-            <Title>Good morning!</Title>
-            <SubTitle>
-              Here you can find information about your heating systems
-            </SubTitle>
-          </Box>
-          <DateBox>{currDay.toDateString()}</DateBox>
-        </ContentHeader>
-        <FlexBox>
-          <CurrModeBox mode={1} />
-        </FlexBox>
-        <TouchScroll>
-          {widgets.map((widget) => (
-            <WidgetCard
-              key={widget.title}
-              icon={widget.icon}
-              title={widget.title}
-            >
-              {widget.content}
-            </WidgetCard>
-          ))}
-          <Box width='4rem' />
-        </TouchScroll>
-      </Content>
-      <SideBar />
-    </Root>
+    <>
+      <ContentHeader>
+        <Box>
+          <Title>Good morning!</Title>
+          <SubTitle>
+            Here you can find information about your heating systems
+          </SubTitle>
+        </Box>
+        <DateBox>{currDay.toDateString()}</DateBox>
+      </ContentHeader>
+      <FlexBox>
+        {
+          <CurrModeBox
+            mode={currMode}
+            isLoadingExt={currMode !== 0 && !currMode}
+          />
+        }
+      </FlexBox>
+      <TouchScroll>
+        {widgets.map((widget) => (
+          <WidgetCard
+            key={widget.title}
+            icon={widget.icon}
+            title={widget.title}
+          >
+            {widget.content}
+          </WidgetCard>
+        ))}
+        <Box width='4rem' />
+      </TouchScroll>
+    </>
   );
 };
 

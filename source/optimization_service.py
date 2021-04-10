@@ -25,17 +25,17 @@ def build_sequences(
 
 ACCUMULATOR = dmocks.Accumulator(0.0)
 OUTSIDE_TERMOMETER = dmocks.OutsideThermometer(datetime.datetime.now())
-INSIDE_TERMOMETER = dmocks.InsideThermometer()
+INSIDE_TERMOMETER = dmocks.InsideThermometer(21)
 
 def plan_next_sequence():
     response = wapi.get_weather_parameters()
 
-    initial_curr_temp = 24.0
-    # initial_outside_temp = temp_sensor.get_temperature()
-    # initial_clouding =  1 - (response[0]["clouds"] / 100.0) # z api
-    initial_accumulator = ACCUMULATOR.power
+    initial_curr_temp = INSIDE_TERMOMETER.get_current_temperature()
+    initial_outside_temp = OUTSIDE_TERMOMETER.get_current_temperature()
+    from copy import deepcopy
+    initial_accumulator = deepcopy(ACCUMULATOR.power)
 
-    best_sequence = None   # jaki ustawić mode
+    best_sequence = None
     best_run_params = None
     min_net_total_cost = float("inf")
     for modes_sequence in build_sequences():
@@ -43,13 +43,13 @@ def plan_next_sequence():
 
         date = datetime.datetime.now()
         curr_temp = initial_curr_temp
-        accumulator = initial_accumulator
+        accumulator = deepcopy(initial_accumulator)
 
         algorithm_run = []
         for index, mode in enumerate(modes_sequence):
-            outside_temp = response[index]["temperature"] if index != 0 else OUTSIDE_TERMOMETER.get_current_temperature()
+            outside_temp = response[index]["temperature"] if index != 0 else initial_outside_temp
             clouding = 1 - (response[index]["clouds"] / 100.0)
-
+            # print(outside_temp)
             if index == 0:
                 algorithm_run.append({
                     "outside_temp": outside_temp,
@@ -85,7 +85,9 @@ def plan_next_sequence():
             best_sequence = modes_sequence
             best_run_params = algorithm_run
 
+    INSIDE_TERMOMETER.set_temperature(best_run_params[1]["curr_temp"])
     ACCUMULATOR.power = best_run_params[1]["accumulator"]
+
     return best_sequence, algorithm_run
 
 

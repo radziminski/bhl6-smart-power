@@ -1,9 +1,12 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import styled from 'styled-components';
 import { BiRefresh, BiSun, BiCloud } from 'react-icons/bi';
 import { IoMdPartlySunny } from 'react-icons/io';
 import Loader from 'components/Loader';
 import Box, { FlexBox } from 'components/Box';
+import { IWeatherDay } from 'types';
+import axios from 'axios';
+import { BASE_URL } from 'constant-values';
 
 export const SIDEBAR_WIDTH = 22;
 
@@ -18,6 +21,7 @@ const Root = styled.div`
   right: 0;
   padding: 2.2rem;
   padding-top: 4rem;
+  overflow-y: scroll;
 `;
 
 const Header = styled.div`
@@ -71,110 +75,88 @@ const ForecastCard = styled.div`
   margin-bottom: 2rem;
 `;
 
+const ForecastBox = styled.div`
+  overflow-y: auto;
+`;
+
 const SideBar = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const [forecast, setForecast] = useState<IWeatherDay[]>();
+
+  const fetchForecast = async () => {
+    // const response = await axios.get(`${BASE_URL}/weather_forecast`);
+    // setForecast(response.data);
+  };
+
+  useEffect(() => {
+    fetchForecast();
+  }, []);
 
   const onRefresh = () => {
-    setIsLoading(!isLoading);
+    setForecast(undefined);
+    fetchForecast();
   };
 
   return (
     <Root>
-      <Header>
-        <Title>Current Weather:</Title>
+      {forecast ? (
+        <>
+          <Header>
+            <Title>Current Weather:</Title>
 
-        {!isLoading ? (
-          <HeaderIcon onClick={onRefresh}>
-            <BiRefresh />
-          </HeaderIcon>
-        ) : (
-          <HeaderIcon onClick={onRefresh}>
-            <Loader size={20} />
-          </HeaderIcon>
-        )}
-      </Header>
-      <WeatherImage>
-        <IoMdPartlySunny />
-      </WeatherImage>
-      <WeatherTitle>
-        Its looking good today! Photovoltaics are fully operational!
-      </WeatherTitle>
-      <WeatherSubTitle>Current temperature: 28°C</WeatherSubTitle>
-      <WeatherSubTitle>Current cloudiness: 20%</WeatherSubTitle>
-      <Box marginTop='3.6rem'>
-        <WeatherTitle>Forecast for today:</WeatherTitle>
-        <ForecastCard>
-          10:00
-          <Box>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiSun />
-              </Box>
-              28°C
-            </FlexBox>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiCloud />
-              </Box>
-              20%
-            </FlexBox>
+            {!isLoading ? (
+              <HeaderIcon onClick={onRefresh}>
+                <BiRefresh />
+              </HeaderIcon>
+            ) : (
+              <HeaderIcon onClick={onRefresh}>
+                <Loader size={20} />
+              </HeaderIcon>
+            )}
+          </Header>
+          <WeatherImage>
+            <IoMdPartlySunny />
+          </WeatherImage>
+          <WeatherTitle>
+            Its looking good today! Photovoltaics are fully operational!
+          </WeatherTitle>
+          <WeatherSubTitle>
+            Current temperature: {forecast[0].temperature}°C
+          </WeatherSubTitle>
+          <WeatherSubTitle>
+            Current cloudiness: {forecast[0].clouds}%
+          </WeatherSubTitle>
+          <Box marginTop='3.6rem'>
+            <WeatherTitle>Forecast for today:</WeatherTitle>
+            {forecast.map((el) => {
+              const date = new Date(el.time * 1000);
+              return (
+                <ForecastCard key={el.time}>
+                  {date.toISOString().substring(0, 16).replace('T', ' ')}
+                  <Box>
+                    <FlexBox>
+                      <Box paddingRight='8px'>
+                        <BiSun />
+                      </Box>
+                      {Math.round(el.temperature)}°C
+                    </FlexBox>
+                    <FlexBox>
+                      <Box paddingRight='8px'>
+                        <BiCloud />
+                      </Box>
+                      {el.clouds}%
+                    </FlexBox>
+                  </Box>
+                </ForecastCard>
+              );
+            })}
           </Box>
-        </ForecastCard>
-
-        <ForecastCard>
-          10:00
-          <Box>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiSun />
-              </Box>
-              28°C
-            </FlexBox>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiCloud />
-              </Box>
-              20%
-            </FlexBox>
-          </Box>
-        </ForecastCard>
-
-        <ForecastCard>
-          10:00
-          <Box>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiSun />
-              </Box>
-              28°C
-            </FlexBox>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiCloud />
-              </Box>
-              20%
-            </FlexBox>
-          </Box>
-        </ForecastCard>
-
-        <ForecastCard>
-          10:00
-          <Box>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiSun />
-              </Box>
-              28°C
-            </FlexBox>
-            <FlexBox>
-              <Box paddingRight='8px'>
-                <BiCloud />
-              </Box>
-              20%
-            </FlexBox>
-          </Box>
-        </ForecastCard>
-      </Box>
+        </>
+      ) : (
+        <FlexBox justifyContent='center' alignItems='center' height='100%'>
+          <Loader />
+        </FlexBox>
+      )}
     </Root>
   );
 };
