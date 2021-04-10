@@ -26,8 +26,14 @@ class Accumulator:
 
 
 class InsideThermometer():
-    def __init__(self):
-        pass
+    def __init__(self, initial_temperature):
+        self.inside_temperature = initial_temperature
+
+    def set_temperature(self, current_temperature: float) -> None:
+        self.inside_temperature = current_temperature
+
+    def get_current_temperature(self) -> float:
+        return self.inside_temperature
 
 
 class OutsideThermometer:
